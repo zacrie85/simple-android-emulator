@@ -12,10 +12,32 @@ tanpa menginstal Android Studio.
 
 ---
 
+## 🪶 Mode Tanpa Emulator (PALING RINGAN — 60 KB)
+
+> Emulator terasa berat / tidak mau ribet? Coba ini dulu.
+
+Buka **`nonton-upload-web.html`** (double-click, jalan di Chrome/Edge):
+
+- **TikTok**: login (QR), nonton, dan **upload video langsung dari PC** lewat
+  TikTok Studio resmi (tiktok.com/tiktokstudio/upload) — tanpa emulator sama sekali
+- **SnackVideo**: nonton via web snackvideo.com (upload tetap butuh aplikasi —
+  paling ringan dari HP)
+- **Studio Caption**: kolom Deskripsi + Hashtag (auto #), draft tersimpan otomatis,
+  satu klik salin ke mana pun
+- Ukuran **± 60 KB**, tanpa install, tanpa unduhan besar
+
+Kenapa bisa? Karena untuk *login, nonton, dan upload*, kamu hampir tidak butuh APK:
+TikTok menyediakan semuanya di web resmi. APK Android (program ARM) memang tidak
+bisa jalan di PC x86 tanpa emulator — tapi fungsinya bisa digantikan web.
+Emulator di repo ini tersedia bila tetap diperlukan (mis. upload SnackVideo dari PC).
+
+---
+
 ## Fitur
 
 | File | Fungsi |
 |---|---|
+| `nonton-upload-web.html` | **Mode tanpa emulator**: nonton/login/upload TikTok via web + Studio Caption (60 KB) |
 | `setup.bat` | Installer satu klik (ONLINE): unduh JDK + Android SDK + buat emulator + driver akselerasi |
 | `install-offline.bat` | Installer **OFFLINE**: dari 3 file zip rilis GitHub, TANPA unduhan ke server Google |
 | `start-emulator.bat` | Menyalakan Android (jendela emulator muncul seperti HP biasa) |
@@ -157,6 +179,10 @@ lihat **[docs/panduan-lengkap.md](docs/panduan-lengkap.md)**.
 
 ## Riwayat Versi
 
+- **v1.3.0** - **Mode Tanpa Emulator**: `nonton-upload-web.html` (± 60 KB) -
+  nonton & login TikTok + upload via TikTok Studio resmi, nonton SnackVideo di
+  web, dan Studio Caption (Deskripsi + Hashtag, salin 1 klik). Solusi untuk PC
+  yang tidak kuat menjalankan emulator
 - **v1.2.0** - **Offline Installer**: semua komponen dipaketkan jadi 3 file zip di
   halaman Releases (masing-masing < 2 GB) - pasang tanpa unduhan ke server Google
   via `install-offline.bat`. Keyboard helper ADBKeyboard ikut di paket (helper

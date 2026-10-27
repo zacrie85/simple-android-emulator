@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nonton & Upload - TikTok & SnackVideo (Tanpa Emulator)</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1d212b; --line:#2a2f3a;
+    --text:#e8eaf0; --muted:#9aa3b2;
+    --tt-cyan:#25f4ee; --tt-red:#fe2c55;
+    --sv-orange:#ff7c1a;
+    --ok:#2ecc71;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
+    line-height:1.6; min-height:100vh;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:28px 18px 60px}
+  header{margin-bottom:26px}
+  h1{
+    font-size:1.7rem;font-weight:800;letter-spacing:.2px;
+    background:linear-gradient(90deg,var(--tt-cyan),var(--tt-red) 55%,var(--sv-orange));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sub{color:var(--muted);margin-top:6px;font-size:.95rem}
+  .badge{
+    display:inline-block;margin-top:10px;padding:4px 12px;border-radius:999px;
+    background:var(--card2);border:1px solid var(--line);color:var(--muted);
+    font-size:.8rem;
+  }
+  .badge b{color:var(--ok)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:700px){.grid{grid-template-columns:1fr}}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px;margin-top:16px;
+  }
+  .card h2{font-size:1.15rem;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+  .dot{width:12px;height:12px;border-radius:50%;flex:0 0 auto}
+  .tt .dot{background:linear-gradient(135deg,var(--tt-cyan),var(--tt-red))}
+  .sv .dot{background:var(--sv-orange)}
+  .cs .dot{background:linear-gradient(135deg,#8e7bff,#4bc0ff)}
+  .card p.desc{color:var(--muted);font-size:.9rem;margin-bottom:14px}
+  .btns{display:flex;flex-wrap:wrap;gap:10px}
+  a.btn,button{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:11px 18px;border-radius:12px;border:1px solid var(--line);
+    background:var(--card2);color:var(--text);font-size:.95rem;font-weight:600;
+    cursor:pointer;text-decoration:none;transition:transform .08s ease,border-color .15s;
+  }
+  a.btn:hover,button:hover{border-color:#3d4454;transform:translateY(-1px)}
+  a.btn.primary{background:linear-gradient(90deg,var(--tt-red),#ff5f7a);border:none}
+  a.btn.primary.sv{background:linear-gradient(90deg,var(--sv-orange),#ffab4d)}
+  button.primary{background:linear-gradient(90deg,#6f5cff,#4bc0ff);border:none}
+  a.btn small,button small{font-weight:400;color:rgba(255,255,255,.75)}
+  .note{
+    margin-top:12px;font-size:.85rem;color:var(--muted);
+    background:var(--card2);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;
+  }
+  .note b{color:var(--text)}
+  textarea,input[type=text]{
+    width:100%;background:#12141a;border:1px solid var(--line);border-radius:12px;
+    color:var(--text);padding:12px 14px;font-family:inherit;font-size:.95rem;resize:vertical;
+  }
+  textarea:focus,input:focus{outline:none;border-color:#4a5266}
+  label{display:block;font-size:.85rem;color:var(--muted);margin:12px 0 6px}
+  .preview{
+    margin-top:14px;background:#12141a;border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;min-height:64px;font-size:.95rem;white-space:pre-wrap;word-break:break-word;
+  }
+  .preview .tag{color:var(--tt-cyan)}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .count{color:var(--muted);font-size:.8rem}
+  ol.steps{margin:10px 0 0 18px;color:var(--muted);font-size:.92rem}
+  ol.steps li{margin-bottom:8px}
+  ol.steps b{color:var(--text)}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;margin-top:10px}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left}
+  th{background:var(--card2);color:var(--muted);font-weight:600}
+  td.yes{color:var(--ok);font-weight:700}
+  td.no{color:#ff6b6b;font-weight:700}
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(80px);
+    background:var(--ok);color:#04130a;padding:10px 20px;border-radius:12px;
+    font-weight:700;opacity:0;transition:all .25s ease;pointer-events:none;z-index:9;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer{margin-top:28px;color:var(--muted);font-size:.82rem;text-align:center}
+  footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Nonton &amp; Upload — Tanpa Emulator</h1>
+    <div class="sub">TikTok &amp; SnackVideo langsung dari PC. Satu file HTML ini saja — tanpa install, tanpa Android SDK, tanpa 14 GB.</div>
+    <div class="badge">Ukuran total: <b>&lt; 60 KB</b> &nbsp;•&nbsp; Buka pakai Chrome / Edge &nbsp;•&nbsp; Bisa disimpan di mana saja</div>
+  </header>
+
+  <div class="grid">
+
+    <!-- TIKTOK -->
+    <div class="card tt">
+      <h2><span class="dot"></span>TikTok — lengkap via web resmi</h2>
+      <p class="desc">Login (bisa lewat kode QR), nonton, dan <b>upload video langsung dari file PC</b> lewat TikTok Studio resmi.</p>
+      <div class="btns">
+        <a class="btn primary" href="https://www.tiktok.com/" target="_blank" rel="noopener">▶ Nonton &amp; Login</a>
+        <a class="btn" href="https://www.tiktok.com/tiktokstudio/upload?from=creator_center" target="_blank" rel="noopener">⬆ Upload Video <small>(TikTok Studio)</small></a>
+      </div>
+      <div class="note">
+        <b>Langkah upload:</b> klik Upload → login (QR paling cepat) → drag &amp; drop
+        video dari PC → tempel caption dari Studio Caption di bawah → <b>Post</b>.
+        Resmi: maksimal 30 GB per video, durasi sampai 60 menit.
+      </div>
+    </div>
+
+    <!-- SNACKVIDEO -->
+    <div class="card sv">
+      <h2><span class="dot"></span>SnackVideo — nonton via web</h2>
+      <p class="desc">Feed &amp; video bisa dibuka di browser resmi snackvideo.com.</p>
+      <div class="btns">
+        <a class="btn primary sv" href="https://www.snackvideo.com/" target="_blank" rel="noopener">▶ Nonton di Web</a>
+        <a class="btn" href="https://www.snackvideo.com/discover" target="_blank" rel="noopener">🔍 Jelajahi</a>
+      </div>
+      <div class="note">
+        <b>Catatannya jujur:</b> upload SnackVideo <b>hanya tersedia di aplikasi</b> (tidak ada
+        halaman upload web). Paling ringan: upload dari <b>HP Android</b> — salin caption dari
+        Studio Caption di bawah, kirim videonya ke HP (kabel USB / WhatsApp Web), lalu posting.
+        Kalau memang wajib upload dari PC, baru pakai emulator (paket offline v1.2.0).
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDIO CAPTION -->
+  <div class="card cs">
+    <h2><span class="dot"></span>Studio Caption — Deskripsi + Hashtag</h2>
+    <p class="desc">Tulis sekali, salin ke TikTok (web) maupun SnackVideo (HP). Draft tersimpan otomatis di browser ini.</p>
+
+    <label for="desc">Deskripsi (caption)</label>
+    <textarea id="desc" rows="4" placeholder="Contoh: Resep sambal bawang paling gampang, cuma 3 bahan! 😋"></textarea>
+
+    <label for="tags">Hashtag — pisahkan dengan spasi atau koma, tanda # ditambah otomatis</label>
+    <input type="text" id="tags" placeholder="contoh: resep, masakanindonesia, viral, fyp">
+
+    <div class="preview" id="preview"></div>
+
+    <div class="row">
+      <span class="count" id="count"></span>
+      <div class="btns">
+        <button id="btnCopy" class="primary">📋 Salin Caption</button>
+        <button id="btnClear">🗑 Bersihkan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERBANDINGAN -->
+  <div class="card">
+    <h2><span class="dot" style="background:#9aa3b2"></span>Emulator vs Web — kenapa ini jauh lebih ringan?</h2>
+    <table>
+      <tr><th></th><th>Emulator Android</th><th>Cara Web (file ini)</th></tr>
+      <tr><td>Ukuran</td><td class="no">± 2 GB unduh, 8-14 GB di disk</td><td class="yes">± 60 KB</td></tr>
+      <tr><td>RAM terpakai</td><td class="no">± 2-4 GB saat jalan</td><td class="yes">0 (cuma tab browser)</td></tr>
+      <tr><td>Login &amp; nonton TikTok</td><td class="yes">Ya</td><td class="yes">Ya (resmi)</td></tr>
+      <tr><td>Upload TikTok</td><td class="yes">Ya</td><td class="yes">Ya (TikTok Studio, resmi)</td></tr>
+      <tr><td>Nonton SnackVideo</td><td class="yes">Ya</td><td class="yes">Ya</td></tr>
+      <tr><td>Upload SnackVideo</td><td class="yes">Ya</td><td class="no">Hanya via aplikasi HP / emulator</td></tr>
+    </table>
+    <div class="note">
+      Faktanya: file APK TikTok/SnackVideo berisi program untuk prosesor <b>ARM</b>, sedangkan PC kamu
+      prosesor x86 — jadi APK <b>tidak mungkin</b> jalan tanpa emulator/virtualisasi (fitur "Android di
+      Windows"/WSA juga sudah dihentikan Microsoft tahun 2025). Kabar baiknya, untuk <b>login, nonton,
+      dan upload</b>, kamu hampir tidak butuh APK sama sekali — cukup web resmi seperti di atas.
+    </div>
+  </div>
+
+  <footer>
+    Halaman ini alat bantu pribadi, tidak berafiliasi dengan TikTok, ByteDance, SnackVideo, atau Kuaishou.<br>
+    Semua tombol membuka situs resmi masing-masing di tab baru.
+  </footer>
+</div>
+
+<div class="toast" id="toast">Caption tersalin!</div>
+
+<script>
+(function(){
+  var desc = document.getElementById('desc');
+  var tags = document.getElementById('tags');
+  var preview = document.getElementById('preview');
+  var count = document.getElementById('count');
+  var toast = document.getElementById('toast');
+
+  function esc(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function parseTags(){
+    var raw = tags.value.trim();
+    if(!raw) return [];
+    var parts = raw.split(/[\s,]+/);
+    var out = [];
+    for(var i=0;i<parts.length;i++){
+      var t = parts[i].replace(/^#+/,'').trim();
+      if(t) out.push('#'+t);
+    }
+    return out;
+  }
+  function caption(){
+    var d = desc.value.replace(/\r/g,'').trim();
+    var t = parseTags();
+    if(d && t.length) return d + '\n' + t.join(' ');
+    if(d) return d;
+    return t.join(' ');
+  }
+  function render(){
+    var t = parseTags();
+    var d = desc.value.replace(/\r/g,'').trim();
+    var html = '';
+    if(d) html += esc(d);
+    if(t.length){
+      if(d) html += '\n';
+      html += t.map(function(x){return '<span class="tag">'+esc(x)+'</span>';}).join(' ');
+    }
+    preview.innerHTML = html || '<span style="color:#5b6270">Pratinjau caption muncul di sini…</span>';
+    var n = caption().length;
+    count.textContent = n + ' karakter' + (n>2200 ? '  (melebihi ±2200 karakter — dipotong TikTok)' : '');
+    try{
+      localStorage.setItem('sae_desc', desc.value);
+      localStorage.setItem('sae_tags', tags.value);
+    }catch(e){}
+  }
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(function(){ toast.classList.remove('show'); }, 1800);
+  }
+  function copyCaption(){
+    var text = caption();
+    if(!text){ showToast('Caption masih kosong'); return; }
+    function fallback(){
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand('copy'); showToast('Caption tersalin!'); }
+      catch(e){ showToast('Gagal menyalin — salin manual dari pratinjau'); }
+      document.body.removeChild(ta);
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        showToast('Caption tersalin!');
+      }, fallback);
+    } else { fallback(); }
+  }
+
+  try{
+    desc.value = localStorage.getItem('sae_desc') || '';
+    tags.value = localStorage.getItem('sae_tags') || '';
+  }catch(e){}
+
+  desc.addEventListener('input', render);
+  tags.addEventListener('input', render);
+  document.getElementById('btnCopy').addEventListener('click', copyCaption);
+  document.getElementById('btnClear').addEventListener('click', function(){
+    desc.value=''; tags.value=''; render(); showToast('Dibersihkan');
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
