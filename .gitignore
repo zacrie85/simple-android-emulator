@@ -1,0 +1,18 @@
+# Komponen hasil setup (JDK + Android SDK + AVD), ukuran 6-10 GB
+tools/
+
+# File APK tidak disertakan di repo (hak cipta masing-masing developer)
+apks/*.apk
+
+# Video yang diupload via mode folder
+uploads/*
+!uploads/README.txt
+
+# Log & file sementara
+*.log
+*.zip
+*.tmp
+
+# File sistem Windows
+Thumbs.db
+desktop.ini
