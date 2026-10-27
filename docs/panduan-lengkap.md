@@ -49,6 +49,21 @@ Ya. Satu-satunya langkah yang butuh admin adalah memasang **driver AEHD**
 Wrapper .bat sudah membawa flag `-ExecutionPolicy Bypass`, jadi double-click
 file .bat selalu aman dijalankan. Kamu tidak perlu mengubah pengaturan apa pun.
 
+### 2.4 Setup berhenti di langkah 4/7 "Instalasi paket SDK belum selesai"
+Versi lama setup memakai teknik penerimaan lisensi yang kadang gagal diam-diam
+di PowerShell 5.1. Versi baru (v1.0.1) sudah memakai metode file lisensi
+(standar CI/CD) yang 100% andal. Solusi:
+1. Perbarui setup.ps1 dari repo (lihat instruksi update di README)
+2. Jalankan ulang `setup.bat` - unduhan yang sudah jalan akan dilanjutkan
+3. Bila tetap gagal, sekarang 10 baris terakhir log ditampilkan otomatis di
+   layar - foto/salin itu, atau buka `tools\setup-sdk.log` (notepad) dan
+   kirim bagian terakhirnya untuk dianalisis
+
+Penyebab lain yang mungkin terlihat di log:
+- `licences have not been accepted` -> pastikan versi setup.ps1 terbaru
+- `Connection reset / timeout` -> koneksi tidak stabil, jalankan ulang saja
+- `could not be found or are not available` -> cek ejaan nama paket di log
+
 ## 3. Masalah Saat Menjalankan Emulator
 
 ### 3.1 Emulator gagal menyala

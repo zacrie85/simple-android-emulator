@@ -115,19 +115,59 @@ if (Test-Path $env:SdkManager) {
 Step '4/7  Mengunduh komponen Android SDK (2-3 GB, mohon sabar)'
 # -------------------------------------------------------------------
 if (-not (Test-Path (Join-Path $env:SdkDir 'emulator\emulator.exe'))) {
+  $oldEap = $ErrorActionPreference
+  $ErrorActionPreference = 'Continue'
 
-  Info 'Menerima lisensi SDK ...'
-  $yes = (1..60) | ForEach-Object { 'y' }
-  $yes | & $env:SdkManager --licenses 2>&1 | Out-Null
+  # Terima lisensi SDK secara DETERMINISTIK lewat file lisensi
+  # (metode yang sama dengan CI/CD resmi - tidak tergantung stdin
+  #  yang kadang gagal dibaca sdkmanager di PowerShell 5.1)
+  Info 'Menerima lisensi SDK (file lisensi otomatis) ...'
+  $licDir = Join-Path $env:SdkDir 'licenses'
+  New-Item -ItemType Directory -Path $licDir -Force | Out-Null
+  Set-Content -Path (Join-Path $licDir 'android-sdk-license') -Encoding Ascii -Value @(
+    '24333f8a63b6825ea9c5514f83c2829b004d1fee'
+    'd56f5187479451eabf01fb78af6dfcb131a6481e'
+    '8933bad161af4178b1185d1a37fbf41ea5269c55'
+  )
+  Set-Content -Path (Join-Path $licDir 'android-sdk-preview-license') -Encoding Ascii -Value '84831b9409646a918e30573bab4c9c91346d8abd'
+  Ok 'Lisensi SDK diterima.'
 
-  Info 'Mengunduh: platform-tools (ADB) + emulator + Android 11 (API 30) + AEHD ...'
+  $logPath = Join-Path $env:ToolsDir 'setup-sdk.log'
+  $pkgs = @(
+    'platform-tools',
+    'emulator',
+    'system-images;android-30;google_apis;x86_64',
+    'extras;google;Android_Emulator_Hypervisor_Driver'
+  )
+  Info "Mengunduh: $($pkgs -join ', ')"
   Info 'Ini butuh 10-30 menit tergantung kecepatan internet. Tunggu sampai selesai.'
-  & $env:SdkManager --install 'platform-tools' 'emulator' 'system-images;android-30;google_apis;x86_64' 'extras;google;Android_Emulator_Hypervisor_Driver' 2>&1 | Out-File (Join-Path $env:ToolsDir 'setup-sdk.log') -Encoding UTF8
+
+  & $env:SdkManager --install $pkgs 2>&1 | Out-File $logPath -Encoding UTF8
 
   if ($LASTEXITCODE -ne 0) {
-    Warn 'Instalasi paket SDK belum selesai (lihat tools\setup-sdk.log).'
-    throw 'Jalankan ulang setup.bat untuk melanjutkan dari titik ini.'
+    Warn 'Instalasi gabungan gagal; mencoba satu per satu biar ketahuan paket bermasalahnya ...'
+    $failed = @()
+    foreach ($p in $pkgs) {
+      Info "Memasang $p ..."
+      & $env:SdkManager --install $p 2>&1 | Out-File $logPath -Append -Encoding UTF8
+      if ($LASTEXITCODE -ne 0) {
+        if ($p -eq 'extras;google;Android_Emulator_Hypervisor_Driver') {
+          Warn 'AEHD gagal (opsional; emulator tetap bisa jalan via WHPX). Melanjutkan ...'
+        } else {
+          $failed += $p
+        }
+      }
+    }
+    if ($failed.Count -gt 0) {
+      Warn "Paket yang gagal: $($failed -join ', ')"
+      Warn '----- 10 baris terakhir log -----'
+      Get-Content $logPath -Tail 10 | ForEach-Object { Info $_ }
+      Warn '---------------------------------'
+      $ErrorActionPreference = $oldEap
+      throw "Instalasi SDK gagal. Buka $logPath lalu kirim 10 baris terakhirnya ke asisten untuk dianalisis."
+    }
   }
+  $ErrorActionPreference = $oldEap
   Ok 'Komponen Android SDK terpasang.'
 } else {
   Ok 'Komponen SDK sudah ada, dilewati.'
@@ -161,8 +201,18 @@ $avdCfg = Join-Path $env:AvdHome "$($env:AvdName).avd\config.ini"
 if (Test-Path $avdCfg) {
   Ok 'AVD sudah ada, dilewati.'
 } else {
-  'no' | & $env:AvdManager create avd -n $env:AvdName -k 'system-images;android-30;google_apis;x86_64' -d pixel_4 --force 2>&1 | Out-Null
-  if ($LASTEXITCODE -ne 0) { throw "Gagal membuat AVD. Coba jalankan ulang setup.bat." }
+  $oldEap = $ErrorActionPreference
+  $ErrorActionPreference = 'Continue'
+  $avdLog = Join-Path $env:ToolsDir 'setup-avd.log'
+  'no' | & $env:AvdManager create avd -n $env:AvdName -k 'system-images;android-30;google_apis;x86_64' -d pixel_4 --force 2>&1 | Out-File $avdLog -Encoding UTF8
+  if ($LASTEXITCODE -ne 0) {
+    Warn '----- 10 baris terakhir log pembuatan AVD -----'
+    Get-Content $avdLog -Tail 10 | ForEach-Object { Info $_ }
+    Warn '-----------------------------------------------'
+    $ErrorActionPreference = $oldEap
+    throw "Gagal membuat AVD. Kirim isi $avdLog ke asisten untuk dianalisis."
+  }
+  $ErrorActionPreference = $oldEap
   Add-Content -Path $avdCfg -Value 'hw.ramSize=3072'
   Add-Content -Path $avdCfg -Value 'hw.keyboard=yes'
   Add-Content -Path $avdCfg -Value 'disk.dataPartition.size=8192M'
