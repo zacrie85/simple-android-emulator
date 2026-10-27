@@ -18,6 +18,7 @@ tanpa menginstal Android Studio.
 |---|---|
 | `setup.bat` | Installer satu klik: unduh JDK + Android SDK + buat emulator + driver akselerasi |
 | `start-emulator.bat` | Menyalakan Android (jendela emulator muncul seperti HP biasa) |
+| `helper-upload.bat` | Jendela bantu upload: kolom **Deskripsi & Hashtag** diketik otomatis ke aplikasi |
 | `download-apks.bat` | Membuka halaman unduh **resmi** TikTok & SnackVideo |
 | `install-apks.bat` | Memasang semua APK dari folder `apks\` ke emulator |
 | `add-explorer-menu.bat` | Aktifkan klik kanan **"Kirim ke Emulator"** di Windows Explorer |
@@ -31,14 +32,14 @@ tanpa menginstal Android Studio.
 |---|---|
 | OS | Windows 10 / 11 64-bit |
 | RAM | 8 GB (disarankan 16 GB) |
-| Ruang disk | 15 GB kosong |
+| Ruang disk | 10 GB kosong |
 | Virtualisasi | VT-x / AMD-V aktif di BIOS (umumnya sudah aktif bawaan) |
-| Internet | Ya, hanya saat setup (unduh 2-3 GB, sekali saja) |
+| Internet | Ya, hanya saat setup (unduh ± 1,5 GB, sekali saja) |
 
 ## Cara Pakai - 3 Langkah
 
 ### Langkah 1: Setup (sekali saja)
-Double-click **`setup.bat`**, tunggu 10-30 menit (tergantung internet).
+Double-click **`setup.bat`**, tunggu 5-20 menit (unduhan total ± 1,5 GB).
 Muncul pertanyaan Y/n? Tekan Enter saja (jawaban default = Ya).
 
 ### Langkah 2: Pasang TikTok & SnackVideo
@@ -55,6 +56,11 @@ Muncul pertanyaan Y/n? Tekan Enter saja (jawaban default = Ya).
 
 > Alternatif upload tanpa klik kanan: jalankan `watch-uploads.bat`, lalu
 > copy/paste video apa saja ke folder `uploads\` - otomatis masuk galeri emulator.
+
+**Caption instan (deskripsi + hashtag):** jalankan **`helper-upload.bat`** -
+muncul jendela kecil berisi kolom **Deskripsi** dan **Hashtag** (tanda #
+ditambah otomatis). Kirim video dari situ, lalu saat kolom deskripsi di
+aplikasi aktif, klik "Ketik" - teks termasuk emoji muncul otomatis.
 
 ## Alur Upload (Bagaimana Ini Bekerja?)
 
@@ -81,6 +87,7 @@ Menu klik-kanan disimpan via registry `HKCU` (tanpa admin, aman, mudah dihapus).
 simple-android-emulator/
 |-- setup.bat / setup.ps1          installer satu klik
 |-- start-emulator.bat / .ps1      peluncur Android
+|-- helper-upload.bat / .ps1       jendela bantu upload (deskripsi + hashtag)
 |-- install-apks.bat / .ps1        pasang APK dari apks\
 |-- download-apks.bat / .ps1       buka halaman unduh resmi
 |-- add-explorer-menu.bat / .ps1   pasang menu klik-kanan
@@ -98,11 +105,11 @@ simple-android-emulator/
 ## FAQ Singkat
 
 **Q: Ini emulator apa?**
-Android SDK Emulator resmi dari Google (QEMU), image Android 11 (API 30), x86_64.
+Android SDK Emulator resmi dari Google (QEMU), image Android 9 (API 28), x86_64.
 Yang kita buat hanyalah "kemasan" supaya setup & upload-nya sangat sederhana.
 
 **Q: Kenapa setup lama?**
-Mengunduh ~3 GB (JDK + Android SDK + image Android 11). Cukup SEKALI saja,
+Mengunduh ± 1,5 GB (Java + Android SDK + image Android 9). Cukup SEKALI saja,
 `setup.bat` bisa dijalankan ulang dan langsung lanjut ke langkah yang belum selesai.
 
 **Q: TikTok/SnackVideo-nya mana? Kenapa tidak sekalian?**
@@ -110,7 +117,7 @@ File APK dilindungi hak cipta, jadi tidak boleh disebar lewat repo ini.
 `download-apks.bat` mengarahkan ke halaman unduh resmi masing-masing.
 
 **Q: Berat nggak?**
-Dengan akselerasi AEHD/WHPX, emulator ini jalan mulus untuk video. RAM dipakai ~3 GB.
+Dengan akselerasi AEHD/WHPX, emulator ini jalan mulus untuk video. RAM dipakai ~2 GB.
 
 **Q: Aman?**
 Semua komponen resmi Google/Adoptium. Menu klik-kanan cukup satu kunci registry
@@ -119,6 +126,14 @@ Semua komponen resmi Google/Adoptium. Menu klik-kanan cukup satu kunci registry
 
 Troubleshooting lengkap (emulator gagal menyala, APK ditolak Play Protect, dll):
 lihat **[docs/panduan-lengkap.md](docs/panduan-lengkap.md)**.
+
+## Riwayat Versi
+
+- **v1.1.0** - Setup lebih ringan (± 1,5 GB: JRE 17 + image Android 9 API 28) dan
+  Helper Upload: jendela kolom Deskripsi + Hashtag yang diketik otomatis ke
+  aplikasi di emulator (dukungan emoji via ADBKeyboard open source, MIT)
+- **v1.0.1** - Fix gagal di langkah 4/7 (lisensi SDK via metode CI/CD + retry per paket)
+- **v1.0.0** - Rilis pertama
 
 ## Disclaimer
 

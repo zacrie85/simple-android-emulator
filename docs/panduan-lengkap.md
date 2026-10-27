@@ -113,6 +113,26 @@ Fitur tertentu (misal LIVE, beberapa efek, atau fitur khusus wilayah) bisa
 dibatasi platform ketika diakses dari emulator. Untuk nonton & upload video
 standar, fungsionalnya sama seperti di HP.
 
+### 4.5 Helper Upload: deskripsi & hashtag otomatis
+Jalankan `helper-upload.bat` di PC. Muncul jendela kecil berisi kolom
+**Deskripsi** dan **Hashtag** (tanda # ditambahkan otomatis kalau lupa).
+
+Cara pakai lengkap:
+1. Klik "Pilih..." untuk memilih video, lalu klik **Kirim Video ke Emulator**
+2. Di emulator: buka SnackVideo/TikTok -> tombol Upload (+) -> pilih videonya
+3. Tap kolom deskripsi sampai kursor berkedip
+4. Klik **Ketik Deskripsi + Hashtag ke Aplikasi** di helper
+5. Teks + hashtag muncul di aplikasi. Cek, sesuaikan bila perlu, lalu Post
+
+Catatan teknis:
+- Pengetikan memakai keyboard helper **ADBKeyboard** (open source lisensi MIT,
+  18 KB, dari GitHub senzhk/ADBKeyBoard) yang diunduh & dipasang otomatis saat
+  pertama kali dipakai - emoji dan karakter Indonesia aman 100%
+- Kalau unduhan keyboard helper gagal (misal offline), helper otomatis memakai
+  mode cadangan `input text`: tanpa emoji, karakter khusus dibuang
+- Keyboard bawaan emulator dikembalikan otomatis setelah teks terkirim
+- Tombol "Salin teks ke Clipboard PC" tersedia sebagai cadangan manual
+
 ## 5. Membersihkan
 
 ### 5.1 Hapus menu klik-kanan saja

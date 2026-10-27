@@ -3,10 +3,11 @@
 #
 #  Yang dilakukan script ini:
 #   1. Memeriksa RAM, disk, dan virtualisasi
-#   2. Mengunduh & memasang JDK 17 (Temurin) ke folder tools\jdk
+#   2. Mengunduh & memasang JRE 17 (Temurin, hanya 50 MB) ke tools\jdk
 #   3. Mengunduh Android cmdline-tools resmi dari dl.google.com
-#   4. Mengunduh Android SDK Emulator + system image Android 11
-#      (API 30, google_apis, x86_64) + driver akselerasi AEHD
+#   4. Mengunduh Android SDK Emulator + system image Android 9
+#      (API 28, google_apis, x86_64) + driver akselerasi AEHD
+#      Total unduhan hanya sekitar 1,5 GB
 #   5. Memasang driver akselerasi (butuh izin admin sekali)
 #   6. Membuat perangkat virtual (AVD) bernama "SimpleAVD"
 #   7. Menawarkan menu klik-kanan Explorer & menyalakan emulator
@@ -46,7 +47,7 @@ if ($ramGb -lt 7.5) { Warn 'RAM di bawah 8 GB. Emulator mungkin terasa berat.' }
 $driveLetter = $env:SystemDrive.TrimEnd(':')
 $freeGb = [math]::Round((Get-PSDrive -Name $driveLetter).Free / 1GB, 1)
 Info "Ruang kosong $($env:SystemDrive)      : $freeGb GB"
-if ($freeGb -lt 15) { Warn 'Ruang kosong di bawah 15 GB. Unduhan bisa gagal.' }
+if ($freeGb -lt 10) { Warn 'Ruang kosong di bawah 10 GB. Unduhan bisa gagal.' }
 
 $cpu = Get-CimInstance Win32_Processor
 Info "Prosesor                 : $($cpu.Name)"
@@ -59,22 +60,22 @@ if (-not $virtOn) {
 }
 
 # -------------------------------------------------------------------
-Step '2/7  Menyiapkan Java (JDK 17 Temurin)'
+Step '2/7  Menyiapkan Java (JRE 17 Temurin)'
 # -------------------------------------------------------------------
 if (Test-Path (Join-Path $env:JdkDir 'bin\java.exe')) {
-  Ok 'JDK sudah terpasang, dilewati.'
+  Ok 'Java sudah terpasang, dilewati.'
 } else {
   New-Item -ItemType Directory -Path $env:ToolsDir -Force | Out-Null
-  $jdkZip = Join-Path $env:ToolsDir 'jdk17.zip'
-  Info 'Mengunduh JDK 17 (~190 MB) dari adoptium.net ...'
-  Download-File 'https://api.adoptium.net/v3/binary/latest/17/ga/windows/x64/jdk/hotspot/normal/eclipse?project=jdk' $jdkZip
+  $jdkZip = Join-Path $env:ToolsDir 'jre17.zip'
+  Info 'Mengunduh JRE 17 (~50 MB) dari adoptium.net ...'
+  Download-File 'https://api.adoptium.net/v3/binary/latest/17/ga/windows/x64/jre/hotspot/normal/eclipse?project=jdk' $jdkZip
   $tmp = Join-Path $env:ToolsDir '_jdk'
   Expand-Archive -Path $jdkZip -DestinationPath $tmp -Force
   $inner = Get-ChildItem -Path $tmp | Select-Object -First 1
   Move-Item $inner.FullName $env:JdkDir
   Remove-Item $tmp -Recurse -Force
   Remove-Item $jdkZip -Force
-  Ok "JDK terpasang di $env:JdkDir"
+  Ok "Java terpasang di $env:JdkDir"
 }
 
 # -------------------------------------------------------------------
@@ -112,7 +113,7 @@ if (Test-Path $env:SdkManager) {
 }
 
 # -------------------------------------------------------------------
-Step '4/7  Mengunduh komponen Android SDK (2-3 GB, mohon sabar)'
+Step '4/7  Mengunduh komponen Android SDK (sekitar 1,5 GB, mohon sabar)'
 # -------------------------------------------------------------------
 if (-not (Test-Path (Join-Path $env:SdkDir 'emulator\emulator.exe'))) {
   $oldEap = $ErrorActionPreference
@@ -136,11 +137,11 @@ if (-not (Test-Path (Join-Path $env:SdkDir 'emulator\emulator.exe'))) {
   $pkgs = @(
     'platform-tools',
     'emulator',
-    'system-images;android-30;google_apis;x86_64',
+    'system-images;android-28;google_apis;x86_64',
     'extras;google;Android_Emulator_Hypervisor_Driver'
   )
   Info "Mengunduh: $($pkgs -join ', ')"
-  Info 'Ini butuh 10-30 menit tergantung kecepatan internet. Tunggu sampai selesai.'
+  Info 'Ini butuh 5-20 menit tergantung kecepatan internet. Tunggu sampai selesai.'
 
   & $env:SdkManager --install $pkgs 2>&1 | Out-File $logPath -Encoding UTF8
 
@@ -195,7 +196,7 @@ if (Test-Path $aehdSilent) {
 }
 
 # -------------------------------------------------------------------
-Step '6/7  Membuat perangkat virtual "SimpleAVD" (Android 11)'
+Step '6/7  Membuat perangkat virtual "SimpleAVD" (Android 9)'
 # -------------------------------------------------------------------
 $avdCfg = Join-Path $env:AvdHome "$($env:AvdName).avd\config.ini"
 if (Test-Path $avdCfg) {
@@ -204,7 +205,7 @@ if (Test-Path $avdCfg) {
   $oldEap = $ErrorActionPreference
   $ErrorActionPreference = 'Continue'
   $avdLog = Join-Path $env:ToolsDir 'setup-avd.log'
-  'no' | & $env:AvdManager create avd -n $env:AvdName -k 'system-images;android-30;google_apis;x86_64' -d pixel_4 --force 2>&1 | Out-File $avdLog -Encoding UTF8
+  'no' | & $env:AvdManager create avd -n $env:AvdName -k 'system-images;android-28;google_apis;x86_64' -d pixel_4 --force 2>&1 | Out-File $avdLog -Encoding UTF8
   if ($LASTEXITCODE -ne 0) {
     Warn '----- 10 baris terakhir log pembuatan AVD -----'
     Get-Content $avdLog -Tail 10 | ForEach-Object { Info $_ }
@@ -213,12 +214,12 @@ if (Test-Path $avdCfg) {
     throw "Gagal membuat AVD. Kirim isi $avdLog ke asisten untuk dianalisis."
   }
   $ErrorActionPreference = $oldEap
-  Add-Content -Path $avdCfg -Value 'hw.ramSize=3072'
+  Add-Content -Path $avdCfg -Value 'hw.ramSize=2048'
   Add-Content -Path $avdCfg -Value 'hw.keyboard=yes'
   Add-Content -Path $avdCfg -Value 'disk.dataPartition.size=8192M'
   Add-Content -Path $avdCfg -Value 'hw.gpu.enabled=yes'
   Add-Content -Path $avdCfg -Value 'hw.gpu.mode=auto'
-  Ok 'AVD dibuat: SimpleAVD (Android 11, RAM 3 GB, disk 8 GB)'
+  Ok 'AVD dibuat: SimpleAVD (Android 9, RAM 2 GB, disk 8 GB)'
 }
 
 # -------------------------------------------------------------------
@@ -259,6 +260,7 @@ Write-Host '=================================================' -ForegroundColor 
 Write-Host ''
 Write-Host '  Ringkasan perintah (double-click file .bat):'
 Write-Host '   start-emulator.bat      -> menyalakan Android'
+Write-Host '   helper-upload.bat       -> bantu upload: deskripsi + hashtag'
 Write-Host '   install-apks.bat        -> pasang APK dari folder apks\'
 Write-Host '   add-explorer-menu.bat   -> klik kanan video = upload'
 Write-Host '   watch-uploads.bat       -> mode folder upload otomatis'
