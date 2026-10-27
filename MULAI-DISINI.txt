@@ -1,0 +1,37 @@
+=========================================================
+  SIMPLE ANDROID EMULATOR - PAKET OFFLINE
+  Nonton & upload video TikTok / SnackVideo
+=========================================================
+
+PAKET INI TERDIRI DARI 3 FILE ZIP
+  1. offline-part1-app-java-cmdline.zip  -> aplikasi + Java + tools
+  2. offline-part2-emulator-tools.zip    -> emulator Android
+  3. offline-part3-system-image.zip      -> system image Android 11
+
+CARA PASANG (tanpa internet, kecuali langkah APK):
+  1. Pastikan 3 file zip sudah terunduh lengkap.
+  2. Klik kanan file PART 1  ->  "Extract All"  ->  buka folder
+     hasil extract-nya.
+  3. (Opsional tapi disarankan) Pindahkan file part2 & part3
+     ke dalam folder hasil extract tadi. Kalau tidak dipindah
+     juga tidak apa-apa, installer otomatis mencarinya di
+     folder Downloads dan Desktop.
+  4. Double-click  install-offline.bat
+  5. Ikuti petunjuk di layar sampai muncul "Instalasi OFFLINE
+     selesai!".
+
+YANG TETAP BUTUH INTERNET (sekali saja):
+  - APK TikTok & SnackVideo tidak bisa disertakan di paket
+    (hak cipta). Installer akan menawarkan membuka halaman
+    unduh resminya. Simpan APK-nya ke folder apks\ lalu
+    jalankan install-apks.bat.
+
+SETELAH TERPASANG:
+  start-emulator.bat   -> menyalakan Android (jendela emulator)
+  helper-upload.bat    -> upload video + isi deskripsi & hashtag
+                          dengan gampang
+  Klik kanan file video di Explorer -> "Kirim ke Emulator Android"
+
+SYARAT PC:
+  Windows 10/11 64-bit, RAM 8 GB, ruang disk bebas 5 GB,
+  virtualisasi aktif (VT-x). Detail lengkap: docs\panduan-lengkap.md

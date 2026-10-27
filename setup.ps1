@@ -5,9 +5,9 @@
 #   1. Memeriksa RAM, disk, dan virtualisasi
 #   2. Mengunduh & memasang JRE 17 (Temurin, hanya 50 MB) ke tools\jdk
 #   3. Mengunduh Android cmdline-tools resmi dari dl.google.com
-#   4. Mengunduh Android SDK Emulator + system image Android 9
-#      (API 28, google_apis, x86_64) + driver akselerasi AEHD
-#      Total unduhan hanya sekitar 1,5 GB
+#   4. Mengunduh Android SDK Emulator + system image Android 11
+#      (API 30, google_apis, x86_64) + driver akselerasi AEHD
+#      Total unduhan sekitar 2 GB
 #   5. Memasang driver akselerasi (butuh izin admin sekali)
 #   6. Membuat perangkat virtual (AVD) bernama "SimpleAVD"
 #   7. Menawarkan menu klik-kanan Explorer & menyalakan emulator
@@ -113,7 +113,7 @@ if (Test-Path $env:SdkManager) {
 }
 
 # -------------------------------------------------------------------
-Step '4/7  Mengunduh komponen Android SDK (sekitar 1,5 GB, mohon sabar)'
+Step '4/7  Mengunduh komponen Android SDK (sekitar 2 GB, mohon sabar)'
 # -------------------------------------------------------------------
 if (-not (Test-Path (Join-Path $env:SdkDir 'emulator\emulator.exe'))) {
   $oldEap = $ErrorActionPreference
@@ -133,11 +133,15 @@ if (-not (Test-Path (Join-Path $env:SdkDir 'emulator\emulator.exe'))) {
   Set-Content -Path (Join-Path $licDir 'android-sdk-preview-license') -Encoding Ascii -Value '84831b9409646a918e30573bab4c9c91346d8abd'
   Ok 'Lisensi SDK diterima.'
 
+  # Catatan: image Android 11 (API 30) dipilih karena APK TikTok &
+  # SnackVideo hanya berisi library ARM (armeabi/arm64). Emulator
+  # x86_64 API 30 punya terjemahan ARM bawaan; image API 28 tidak,
+  # sehingga APK akan gagal install (INSTALL_FAILED_NO_MATCHING_ABIS).
   $logPath = Join-Path $env:ToolsDir 'setup-sdk.log'
   $pkgs = @(
     'platform-tools',
     'emulator',
-    'system-images;android-28;google_apis;x86_64',
+    'system-images;android-30;google_apis;x86_64',
     'extras;google;Android_Emulator_Hypervisor_Driver'
   )
   Info "Mengunduh: $($pkgs -join ', ')"
@@ -196,7 +200,7 @@ if (Test-Path $aehdSilent) {
 }
 
 # -------------------------------------------------------------------
-Step '6/7  Membuat perangkat virtual "SimpleAVD" (Android 9)'
+Step '6/7  Membuat perangkat virtual "SimpleAVD" (Android 11)'
 # -------------------------------------------------------------------
 $avdCfg = Join-Path $env:AvdHome "$($env:AvdName).avd\config.ini"
 if (Test-Path $avdCfg) {
@@ -205,7 +209,7 @@ if (Test-Path $avdCfg) {
   $oldEap = $ErrorActionPreference
   $ErrorActionPreference = 'Continue'
   $avdLog = Join-Path $env:ToolsDir 'setup-avd.log'
-  'no' | & $env:AvdManager create avd -n $env:AvdName -k 'system-images;android-28;google_apis;x86_64' -d pixel_4 --force 2>&1 | Out-File $avdLog -Encoding UTF8
+  'no' | & $env:AvdManager create avd -n $env:AvdName -k 'system-images;android-30;google_apis;x86_64' -d pixel_4 --force 2>&1 | Out-File $avdLog -Encoding UTF8
   if ($LASTEXITCODE -ne 0) {
     Warn '----- 10 baris terakhir log pembuatan AVD -----'
     Get-Content $avdLog -Tail 10 | ForEach-Object { Info $_ }
@@ -219,7 +223,7 @@ if (Test-Path $avdCfg) {
   Add-Content -Path $avdCfg -Value 'disk.dataPartition.size=8192M'
   Add-Content -Path $avdCfg -Value 'hw.gpu.enabled=yes'
   Add-Content -Path $avdCfg -Value 'hw.gpu.mode=auto'
-  Ok 'AVD dibuat: SimpleAVD (Android 9, RAM 2 GB, disk 8 GB)'
+  Ok 'AVD dibuat: SimpleAVD (Android 11, RAM 2 GB, disk 8 GB)'
 }
 
 # -------------------------------------------------------------------

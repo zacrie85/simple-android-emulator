@@ -33,7 +33,12 @@ di versi emulator terbaru, jadi langkah di atas hanya bila memang gagal menyala.
 ## 2. Masalah Saat Setup
 
 ### 2.1 Unduhan gagal / lemot
-- Jalankan ulang `setup.bat` - semua langkah yang sudah selesai DILEWATI otomatis
+- **Cara terbaik: pakai mode OFFLINE** - unduh 3 file zip dari halaman Releases
+  (unduhan bisa bertahap, di-retry, atau pakai download manager), klik kanan
+  part 1 -> Extract All, lalu jalankan `install-offline.bat`. Tidak ada unduhan
+  besar lagi dari dl.google.com - detail langkah di README bagian
+  "Cara Pakai - Mode OFFLINE".
+- Atau: jalankan ulang `setup.bat` - semua langkah yang sudah selesai DILEWATI otomatis
 - Unduhan SDK dari `dl.google.com` biasanya stabil; kalau jaringan tidak stabil,
   jalankan setup di jam sepi
 - Cek log di `tools\setup-sdk.log` bila langkah 4 gagal
@@ -61,8 +66,30 @@ di PowerShell 5.1. Versi baru (v1.0.1) sudah memakai metode file lisensi
 
 Penyebab lain yang mungkin terlihat di log:
 - `licences have not been accepted` -> pastikan versi setup.ps1 terbaru
-- `Connection reset / timeout` -> koneksi tidak stabil, jalankan ulang saja
+- `Connection reset / timeout` -> koneksi tidak stabil, jalankan ulang saja,
+  atau lompat ke **mode OFFLINE** (README)
 - `could not be found or are not available` -> cek ejaan nama paket di log
+
+### 2.5 Instalasi offline: paket part 2/3 tidak ditemukan
+`install-offline.bat` mencari `offline-part2-*.zip` dan `offline-part3-*.zip`
+di folder aplikasi, folder induknya, **Downloads**, dan **Desktop**. Kalau tetap
+"tidak ditemukan":
+1. Pastikan kedua file benar-benar sudah terunduh (ukuran masing-masing ratusan
+   MB s.d. > 1 GB - file setengah jalan bisa terdeteksi tapi gagal diekstrak;
+   unduh ulang bila ragu)
+2. Pindahkan file ke folder yang sama dengan `install-offline.bat`
+3. Ekstraksi macet/error: jalankan ulang installer - part yang sudah terekstrak
+   DILEWATI otomatis (deteksinya dari keberadaan `emulator.exe`, `adb.exe`,
+   dan system image)
+
+### 2.6 APK TikTok gagal install: INSTALL_FAILED_NO_MATCHING_ABIS
+APK TikTok/SnackVideo hanya berisi library ARM. Emulator harus memakai image
+**Android 11 (API 30)** yang punya terjemahan ARM bawaan. Semua installer di
+repo ini (online & offline) sudah memakai image API 30. Kalau AVD lama dibuat
+dari versi v1.1.0 (API 28), hapus dan buat ulang:
+1. Jalankan `uninstall.bat` (pilih hapus AVD saja) ATAU hapus manual folder
+   `tools\avd\SimpleAVD.avd`
+2. Jalankan ulang `setup.bat` atau `install-offline.bat` - AVD Android 11 dibuat ulang
 
 ## 3. Masalah Saat Menjalankan Emulator
 

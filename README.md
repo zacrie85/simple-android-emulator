@@ -16,7 +16,8 @@ tanpa menginstal Android Studio.
 
 | File | Fungsi |
 |---|---|
-| `setup.bat` | Installer satu klik: unduh JDK + Android SDK + buat emulator + driver akselerasi |
+| `setup.bat` | Installer satu klik (ONLINE): unduh JDK + Android SDK + buat emulator + driver akselerasi |
+| `install-offline.bat` | Installer **OFFLINE**: dari 3 file zip rilis GitHub, TANPA unduhan ke server Google |
 | `start-emulator.bat` | Menyalakan Android (jendela emulator muncul seperti HP biasa) |
 | `helper-upload.bat` | Jendela bantu upload: kolom **Deskripsi & Hashtag** diketik otomatis ke aplikasi |
 | `download-apks.bat` | Membuka halaman unduh **resmi** TikTok & SnackVideo |
@@ -34,13 +35,35 @@ tanpa menginstal Android Studio.
 | RAM | 8 GB (disarankan 16 GB) |
 | Ruang disk | 10 GB kosong |
 | Virtualisasi | VT-x / AMD-V aktif di BIOS (umumnya sudah aktif bawaan) |
-| Internet | Ya, hanya saat setup (unduh ± 1,5 GB, sekali saja) |
+| Internet | Ya untuk unduh APK TikTok/SnackVideo. Komponen emulator bisa diunduh sekali lewat rilis GitHub (mode offline, lihat di bawah) |
+
+## Cara Pakai - Mode OFFLINE (disarankan kalau unduhan dari Google lambat/error)
+
+Semua komponen besar (Java, emulator, system image Android 11, total ± 2,4 GB)
+sudah dipaketkan di halaman **[Releases](../../releases)** dalam 3 file zip.
+
+1. Unduh 3 file dari rilis terbaru ke satu folder (mis. `Downloads`):
+   - `offline-part1-app-java-cmdline.zip`
+   - `offline-part2-emulator-tools.zip`
+   - `offline-part3-system-image.zip`
+2. Klik kanan **part 1** → *Extract All* → buka folder hasil extract
+3. Double-click **`install-offline.bat`**
+   (part 2 & 3 otomatis dicari - boleh tetap di folder Downloads)
+4. Ikuti petunjuk di layar sampai muncul "Instalasi OFFLINE selesai!"
+5. Pasang aplikasi: `download-apks.bat` → simpan APK ke `apks\` → `install-apks.bat`
+   (ini satu-satunya langkah yang masih butuh internet)
+
+Cocok untuk koneksi yang sering putus: unduhan bisa dilakukan bertahap,
+di-retry, atau pakai download manager, lalu pemasangan 100% offline.
 
 ## Cara Pakai - 3 Langkah
 
 ### Langkah 1: Setup (sekali saja)
-Double-click **`setup.bat`**, tunggu 5-20 menit (unduhan total ± 1,5 GB).
+Double-click **`setup.bat`**, tunggu 5-20 menit (unduhan total ± 2 GB).
 Muncul pertanyaan Y/n? Tekan Enter saja (jawaban default = Ya).
+
+> Koneksi ke dl.google.com lambat/sering error? Pakai **mode OFFLINE** di atas -
+> unduh 3 file dari halaman Releases lalu jalankan `install-offline.bat`.
 
 ### Langkah 2: Pasang TikTok & SnackVideo
 1. Jalankan **`download-apks.bat`** - browser membuka halaman resmi TikTok & SnackVideo
@@ -105,12 +128,17 @@ simple-android-emulator/
 ## FAQ Singkat
 
 **Q: Ini emulator apa?**
-Android SDK Emulator resmi dari Google (QEMU), image Android 9 (API 28), x86_64.
+Android SDK Emulator resmi dari Google (QEMU), image Android 11 (API 30), x86_64.
+Image API 30 dipakai karena punya terjemahan ARM bawaan - APK TikTok/SnackVideo
+hanya tersedia untuk prosesor ARM, jadi hanya bisa jalan di image Android 11+
+(di image lebih lama muncul error `INSTALL_FAILED_NO_MATCHING_ABIS`).
 Yang kita buat hanyalah "kemasan" supaya setup & upload-nya sangat sederhana.
 
 **Q: Kenapa setup lama?**
-Mengunduh ± 1,5 GB (Java + Android SDK + image Android 9). Cukup SEKALI saja,
+Mengunduh ± 2 GB (Java + Android SDK + image Android 11). Cukup SEKALI saja,
 `setup.bat` bisa dijalankan ulang dan langsung lanjut ke langkah yang belum selesai.
+Kalau unduhannya lambat/error terus, pakai **mode OFFLINE** (3 file zip dari
+halaman Releases + `install-offline.bat`).
 
 **Q: TikTok/SnackVideo-nya mana? Kenapa tidak sekalian?**
 File APK dilindungi hak cipta, jadi tidak boleh disebar lewat repo ini.
@@ -129,6 +157,11 @@ lihat **[docs/panduan-lengkap.md](docs/panduan-lengkap.md)**.
 
 ## Riwayat Versi
 
+- **v1.2.0** - **Offline Installer**: semua komponen dipaketkan jadi 3 file zip di
+  halaman Releases (masing-masing < 2 GB) - pasang tanpa unduhan ke server Google
+  via `install-offline.bat`. Keyboard helper ADBKeyboard ikut di paket (helper
+  upload benar-benar offline). Image system kembali ke **Android 11 (API 30)**
+  karena APK TikTok/SnackVideo ber-ARM hanya bisa jalan di image API 30+
 - **v1.1.0** - Setup lebih ringan (± 1,5 GB: JRE 17 + image Android 9 API 28) dan
   Helper Upload: jendela kolom Deskripsi + Hashtag yang diketik otomatis ke
   aplikasi di emulator (dukungan emoji via ADBKeyboard open source, MIT)
